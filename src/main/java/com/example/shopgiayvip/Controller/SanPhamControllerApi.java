@@ -58,17 +58,17 @@ public class SanPhamControllerApi {
         giayChiTiet.setHangGiay(hangGiayRepo.getReferenceById(idHang));
         giayChiTiet.setSizeGiay(sizeGiayRepo.getReferenceById(idSize));
         giayChiTiet.setMauSacGiay(mauSacRepo.getReferenceById(idMau));
-        giayChiTiet.setGiaBan(giaBan);
         giayChiTiet.setSoLuongTon(soLuong);
         giayChiTiet.setTenGiay(tenGiay);
         GiayChiTiet gct = giayCTRepo.findByTrangThaiAndHangGiayAndSizeGiayAndMauSacGiayAndTenGiay("Còn hàng",hangGiayRepo.getReferenceById(idHang),sizeGiayRepo.getReferenceById(idSize),mauSacRepo.getReferenceById(idMau),tenGiay);
         if(gct == null){
-            return ResponseEntity.ok("");
+            return ResponseEntity.ok(giayCTRepo.save(giayChiTiet));
         }else {
             giayChiTiet.setId(gct.getId());
+            giayChiTiet.setGiaBan(giaBan);
             gct.setSoLuongTon(gct.getSoLuongTon() + giayChiTiet.getSoLuongTon());
             gct.setGiaBan(gct.getGiaBan());
-
+            giayCTRepo.save(gct);
             return ResponseEntity.ok("update");
         }
     }

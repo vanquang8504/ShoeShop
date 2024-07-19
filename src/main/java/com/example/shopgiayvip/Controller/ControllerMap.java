@@ -53,7 +53,7 @@ public class ControllerMap {
     public String getLoginPage( Model model, @RequestParam(value = "error",required = false) String error,Authentication authentication){
         System.out.println(error1);
         if (error != null) {
-            model.addAttribute("error", "Đăng nhập thất bại!");
+            model.addAttribute("error", "Sai tài khoản hặc mật khẩu (admin : username: a@example.com pass: 12345  and user : b@example.com pass :12345)");
         }
         return "login";
     }

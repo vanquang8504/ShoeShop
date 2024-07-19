@@ -230,4 +230,22 @@ public class ControllerApi {
         List<GioHangChiTiet> list = gioHangChiTietRepo.findByHoaDon(hoaDon);
         return ResponseEntity.ok(list);
     }
+    @GetMapping("/countCategory")
+    public ResponseEntity<?> count(Authentication authentication){
+        if (authentication != null){
+            NguoiDungDetails nguoiDungDetails = (NguoiDungDetails) authentication.getPrincipal();
+            NguoiDung nguoiDung = nguoiDungDetails.getUser();
+            GioHang gioHangHienTai = gioHangRepo.gioHangHienTai(nguoiDung.getId());
+
+            Integer size = gioHangChiTietRepo.findByGioHangAndTrangThai(gioHangHienTai,"true").size();
+            return ResponseEntity.ok(size);
+        }
+        return ResponseEntity.ok(0);
+    }
+    @Autowired
+    CountRepo countRepo;
+    @GetMapping("/countBrand")
+    public ResponseEntity<?> getCount(){
+        return ResponseEntity.ok(countRepo.list());
+    }
 }

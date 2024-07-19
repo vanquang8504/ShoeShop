@@ -22,4 +22,5 @@ public interface GioHangChiTietRepo extends JpaRepository<GioHangChiTiet, Intege
     List<GioHangChiTiet> listGioHangChiTiet(Integer idGioHang);
 
     List<GioHangChiTiet> findByHoaDon(HoaDon hoaDon);
+    List<GioHangChiTiet> findByGioHangAndTrangThai(GioHang gioHang, String trangThai);
 }
