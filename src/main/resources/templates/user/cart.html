@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="layouts/css :: css">
+
+</head>
+<style>
+    .success-message {
+        position: fixed;
+        top: 130px;
+        right: 20px;
+        background-color: white;
+        color: green;
+        padding: 10px 20px;
+        border: 1px solid;
+        border-radius: 5px;
+        animation: fadeIn 0.5s ease-in-out forwards;
+        z-index: 9999;
+    }
+
+    .success-message.hide {
+        animation: fadeOut 0.5s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+    }
+
+    .modal.fade {
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+    .modal.fade.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @keyframes fadeOutModal {
+        from {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+    }
+
+    .modal.fade.hiding {
+        animation: fadeOutModal 0.3s ease-out;
+    }
+
+
+    .form-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .formart .form-control {
+        border: none;
+        border-bottom: 2px solid #ccc;
+        border-radius: 0;
+        padding-left: 0;
+        padding-top: 1.5rem;
+        transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .formart .form-control:focus {
+        box-shadow: 0 1px 0 0 #007bff;
+        border-color: #007bff;
+    }
+
+    .formart .form-label {
+        position: absolute;
+        top: -2px;
+        left: 0;
+        font-size: 1rem;
+        color: #6c757d;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .formart .form-control:focus + .form-label,
+    .formart .form-control:not(:placeholder-shown) + .form-label {
+        top: -1px;
+        font-size: 0.8rem;
+        color: #007bff;
+    }
+
+    .formart .form-control:not(:focus):not(:placeholder-shown) + .form-label {
+        top: -2px;
+        font-size: 1rem;
+        color: #6c757d;
+        transition: all 0.3s ease-in-out;
+    }
+
+
+</style>
+<body onload="load()">
+
+<!-- Spinner Start -->
+<div id="spinner"
+     class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+    <div class="spinner-grow text-primary" role="status"></div>
+</div>
+<!-- Spinner End -->
+
+
+<!-- Navbar start -->
+<div class="" th:replace="layouts/header :: header"></div>
+<!-- Navbar End -->
+
+
+<!-- Modal Search Start -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content rounded-0">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+                <div class="input-group w-75 mx-auto d-flex">
+                    <input type="search" class="form-control p-3" placeholder="keywords"
+                           aria-describedby="search-icon-1">
+                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Search End -->
+
+
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Cart</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a th:href="@{/#}">Home</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/#}">Pages</a></li>
+        <li class="breadcrumb-item active text-white">Cart</li>
+    </ol>
+</div>
+<!-- Single Page Header End -->
+
+
+<!-- Cart Page Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Products</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Handle</th>
+                </tr>
+                </thead>
+                <tbody id="DSGioHang">
+
+
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-5">
+            <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Code">
+            <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop" type="button">Apply Coupon
+            </button>
+        </div>
+        <div class="row g-4 justify-content-between">
+            <div class="col-6">
+                <h1 class="mb-4 text-center">User Information Form</h1>
+                <form id="user-form" class="formart">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="name" name="name" placeholder=" " required>
+                        <label for="name" class="form-label">Tên người nhận</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="diaChi" name="email" placeholder=" " required>
+                        <label class="form-label">Địa chỉ</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="age" name="age" placeholder=" " required>
+                        <label for="age" class="form-label">Số điện thoại</label>
+                    </div>
+                </form>
+                <div class="row mt-3">
+                    <button data-bs-toggle="modal" data-bs-target="#staticBackdrop1" onclick="danhSachDiaChi()"
+                            class="btn border-secondary rounded-pill px-4 py-3 mx-auto text-primary col-4">Chọn địa chỉ
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+                <div class="bg-light rounded">
+                    <div class="p-4">
+                        <h1 class="display-6 mb-4">Cart <span class="fw-normal">Total</span></h1>
+                        <div class="d-flex justify-content-between mb-4">
+                            <h5 class="mb-0 me-4">Subtotal:</h5>
+                            <p class="mb-0" id="tongTien"></p>
+                        </div>
+                        <div class="d-flex justify-content-between mb-4">
+                            <h5 class="mb-0 me-4">sale:</h5>
+                            <p class="mb-0" id="tienGiamGia">0đ</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h5 class="mb-0 me-4">Shipping</h5>
+                            <div class="">
+                                <p class="mb-0">Flat rate: $3.00</p>
+                            </div>
+                        </div>
+                        <p class="mb-0 text-end">Shipping to Ukraine.</p>
+                    </div>
+                    <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
+                        <h5 class="mb-0 ps-4 me-4">Total</h5>
+                        <p class="mb-0 pe-4" id="total">0đ</p>
+                    </div>
+                    <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
+                            type="button" onclick="thanhToan()">Proceed Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Cart Page End -->
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Phiếu giảm giá</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody id="listPGG">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn border-secondary rounded-pill px-4 py-2 text-primary"
+                        data-bs-dismiss="modal">Đóng
+                </button>
+                <button type="button" onclick="chonPGG()"
+                        class="btn border-secondary rounded-pill px-4 py-2 text-primary" data-bs-dismiss="modal">Chọn
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--modal địa chỉ-->
+<div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel1">Địa chỉ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Địa chỉ</th>
+                            <th scope="col"></th>
+                        </tr>
+                        </thead>
+                        <tbody id="listDiaChi">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn border-secondary rounded-pill px-4 py-2 text-primary"
+                        data-bs-dismiss="modal">Đóng
+                </button>
+                <button type="button"
+                        class="btn border-secondary rounded-pill px-4 py-2 text-primary" onclick="chonDiaChi()" data-bs-dismiss="modal">Chọn
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="" th:replace="layouts/footer :: footer"></div>
+
+
+<!-- Back to Top -->
+<a th:href="@{/#}" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i
+        class="fa fa-arrow-up"></i></a>
+
+<div class="" th:replace="layouts/js :: js"></div>
+
+<script>
+
+    function load() {
+        $.ajax({
+            url: "http://localhost:8080/cartt",
+            type: "GET",
+            success: function (data) {
+                if (data === "") {
+                } else {
+                    data.forEach(function (item) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<tr>
+                    <th scope="row">
+                        <div class="d-flex align-items-center">
+                            <img src="img/vegetable-item-3.png" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                        </div>
+                    </th>
+                    <td>
+                        <p class="mb-0 mt-4">Big Banana</p>
+                    </td>
+                    <td>
+                        <p class="mb-0 mt-4">${item.giaBan}đ</p>
+                    </td>
+                    <td>
+                        <div class="input-group quantity mt-4" style="width: 100px;">
+                            <div class="input-group-btn">
+                                <button onclick="giamSL('${item.id}','${item?.giayCT?.id}')" class="btn btn-sm btn-minus rounded-circle bg-light border" >
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <input type="text" id="SoLuongMua-${item.id}" class="form-control form-control-sm text-center border-0" value="${item.soLuongMua}">
+                            <div class="input-group-btn">
+                                <button onclick="tangSL('${item.id}','${item?.giayCT?.id}')" class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <p class="mb-0 mt-4" id="tong-tien-${item.id}">${item.tongTien}đ</p>
+                    </td>
+                    <td>
+                        <button onclick="xoaSP('${item.id}',this)" class="btn btn-md rounded-circle bg-light border mt-4" >
+                            <i class="fa fa-times text-danger"></i>
+                        </button>
+                    </td>
+
+                </tr>`;
+                        document.getElementById("DSGioHang").appendChild(row);
+                    })
+                }
+            }
+        })
+    }
+    function xoaSP(idGHCT,btn){
+        $.ajax({
+            type : "POST",
+            url : "http://localhost:8080/deleteGioHangCT" + "?idGHCT=" + idGHCT,
+            success : function (status){
+                if(status === "success"){
+                    let row = btn.parentNode.parentNode
+                    row.parentNode.removeChild(row);
+
+                    $.ajax({
+                        type: "GET",
+                        url: "http://localhost:8080/tong-tien",
+                        success: function (tongTien) {
+                            document.getElementById("tongTien").innerText = tongTien + "đ";
+                            document.getElementById("total").textContent = tongTien + "đ";
+                        }
+                    })
+
+                    var successMessage = document.createElement('div');
+                    successMessage.classList.add('success-message');
+                    successMessage.textContent = 'Xoá sản phẩm thành công';
+                    document.body.appendChild(successMessage);
+
+                    // Sau 5 giây, thêm class 'hide' để kích hoạt hiệu ứng ẩn
+                    setTimeout(function () {
+                        successMessage.classList.add('hide');
+                        setTimeout(function () {
+                            successMessage.remove();
+                        }, 500); // Đợi 0.5 giây để hoàn tất hiệu ứng ẩn
+                    }, 1000);
+                }
+            }
+        })
+    }
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/listPGG",
+        success: function (listPGG) {
+            listPGG.forEach(function (PGG) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<tr>
+                            <th scope="row">
+                                <div class="d-flex align-items-center">
+                                    <img src="img/vegetable-item-3.png" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                                </div>
+                            </th>
+                            <td>
+                                <p class="mb-0 mt-4">${PGG.id}</p>
+                            </td>
+                            <td>
+                                <p class="mb-0 mt-4">${PGG.tenLoaiPhieu}</p>
+                            </td>
+                            <td>
+                                <p class="mb-0 mt-4">${PGG.mucGiamGia}</p>
+                            </td>
+                            <td>
+                                <p class="mb-0 mt-4">${PGG.mucGiaToiThieu}</p>
+                            </td>
+                            <td>
+                                <input class="mb-0" onclick="pgg('${PGG.id}')" name="pgg" id="pgg" style="margin-top: 31px" type="radio">
+                            </td>
+                        </tr>`;
+                document.getElementById("listPGG").appendChild(row);
+            })
+        }
+    })
+
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/tong-tien",
+        success: function (tongTien) {
+            document.getElementById("tongTien").innerText = tongTien + "đ";
+            document.getElementById("total").textContent = tongTien + "đ";
+        }
+    })
+    let IDPGG = -1;
+
+    function pgg(id) {
+        IDPGG = id;
+    }
+
+    function chonPGG() {
+        let radio = document.querySelectorAll("#pgg");
+        let radioSelected = null;
+        radio.forEach(function (e) {
+            if (e.checked) {
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:8080/maGiamGia" + "?idPGG=" + IDPGG,
+                    success: function (data) {
+                        document.getElementById("tienGiamGia").textContent = data.mucGiamGia + "đ";
+                        document.getElementById("total").textContent = data.tongTien + "đ";
+                    }
+                })
+            }
+        })
+
+    }
+
+    function giamSL(idGH, idSP) {
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/tangSL" + "?idGH=" + idGH + "&roll=giam" + "&idSP=" + idSP,
+            success: function (data) {
+                document.getElementById("tong-tien-" + idGH).textContent = data.tongTien + "đ";
+                document.getElementById("SoLuongMua-" + idGH).value = data.soLuongMua;
+
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8080/tong-tien",
+                    success: function (tongTien) {
+                        document.getElementById("tongTien").innerText = tongTien + "đ";
+                        document.getElementById("total").textContent = tongTien + "đ";
+                    }
+                })
+
+                var successMessage = document.createElement('div');
+                successMessage.classList.add('success-message');
+                successMessage.textContent = 'Giảm số lượng sản phẩm thành công';
+                document.body.appendChild(successMessage);
+
+                // Sau 5 giây, thêm class 'hide' để kích hoạt hiệu ứng ẩn
+                setTimeout(function () {
+                    successMessage.classList.add('hide');
+                    setTimeout(function () {
+                        successMessage.remove();
+                    }, 500); // Đợi 0.5 giây để hoàn tất hiệu ứng ẩn
+                }, 1000);
+            }
+        })
+
+    }
+
+    function tangSL(idGH, idSP) {
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/tangSL" + "?idGH=" + idGH + "&roll=tang" + "&idSP=" + idSP,
+            success: function (data) {
+                document.getElementById("tong-tien-" + idGH).textContent = data.tongTien + "đ";
+                document.getElementById("SoLuongMua-" + idGH).value = data.soLuongMua;
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8080/tong-tien",
+                    success: function (tongTien) {
+                        document.getElementById("tongTien").innerText = tongTien + "đ";
+                        document.getElementById("total").textContent = tongTien + "đ";
+                    }
+                })
+
+                var successMessage = document.createElement('div');
+                successMessage.classList.add('success-message');
+                successMessage.textContent = 'Tăng số lượng sản phẩm thành công';
+                document.body.appendChild(successMessage);
+
+                // Sau 5 giây, thêm class 'hide' để kích hoạt hiệu ứng ẩn
+                setTimeout(function () {
+                    successMessage.classList.add('hide');
+                    setTimeout(function () {
+                        successMessage.remove();
+                    }, 500); // Đợi 0.5 giây để hoàn tất hiệu ứng ẩn
+                }, 1000);
+            }
+        })
+    }
+    function danhSachDiaChi(){
+        document.getElementById("listDiaChi").innerHTML = ``;
+        $.ajax({
+            type : "GET",
+            url : "http://localhost:8080/danhSachDiaChi",
+            success : function (data){
+                data.forEach(function (item) {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `<tr>
+                            <td>
+                                <p class="mb-0 mt-4">${item.dc}</p>
+                            </td>
+                            <td>
+                                <input class="mb-0" onclick="diaChi('${item.id}')" name="dc" id="dc" style="margin-top: 31px" type="radio">
+                            </td>
+                        </tr>`;
+                    document.getElementById("listDiaChi").appendChild(row);
+                })
+            }
+        })
+    }
+    let idDiaChi = null;
+    $.ajax({
+        type : "GET",
+        url : "http://localhost:8080/diaChiNguoiDung",
+        success : function (data){
+            document.getElementById("name").value = data.nguoiDung.hoTen;
+            document.getElementById("diaChi").value = data.dc;
+            document.getElementById("age").value = data.nguoiDung.soDT;
+            idDiaChi = data.id;
+        }
+    })
+    function diaChi(id){
+        idDiaChi = id;
+    }
+
+    function chonDiaChi(){
+        $.ajax({
+            type : "POST",
+            url : "http://localhost:8080/chonDiaChi"+"?idDC="+idDiaChi,
+            success : function (data){
+                document.getElementById("diaChi").value = data.dc;
+            }
+        })
+    }
+
+
+    function thanhToan(){
+        $.ajax({
+            type : "POST",
+            url : "http://localhost:8080/thanhToan" + "?idPGG=" + IDPGG + "&idDC=" +idDiaChi,
+            success : function (status){
+                if(status === "success"){
+                    document.getElementById("DSGioHang").innerHTML=``;
+                    document.getElementById("tongTien").textContent = 0 + "đ";
+                    document.getElementById("tienGiamGia").textContent = 0 + "đ";
+                    document.getElementById("total").textContent = 0 + "đ";
+
+                    var successMessage = document.createElement('div');
+                    successMessage.classList.add('success-message');
+                    successMessage.textContent = 'Thành công';
+                    document.body.appendChild(successMessage);
+
+                    // Sau 5 giây, thêm class 'hide' để kích hoạt hiệu ứng ẩn
+                    setTimeout(function () {
+                        successMessage.classList.add('hide');
+                        setTimeout(function () {
+                            successMessage.remove();
+                        }, 500); // Đợi 0.5 giây để hoàn tất hiệu ứng ẩn
+                    }, 5000);
+                }
+            }
+        })
+    }
+</script>
+</body>
+
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymleaf.org/extras/spring-security6">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+          integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" th:href="@{/css/styleadmin.css}">
+
+    <style>
+        .success-message {
+            position: fixed;
+            top: 130px;
+            right: 20px;
+            background-color: white;
+            color: green;
+            padding: 10px 20px;
+            border: 1px solid;
+            border-radius: 5px;
+            animation: fadeIn 0.5s ease-in-out forwards;
+            z-index: 9999;
+        }
+
+        .success-message.hide {
+            animation: fadeOut 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <aside id="sidebar">
+        <div class="d-flex">
+            <button class="toggle-btn" type="button">
+                <i class="lni lni-grid-alt"></i>
+            </button>
+            <div class="sidebar-logo">
+                <a href="#">CodzSword</a>
+            </div>
+        </div>
+        <ul class="sidebar-nav">
+            <li class="sidebar-item">
+                <a href="/admin/adminPage" class="sidebar-link">
+                    <i class="lni lni-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/admin/addSP" class="sidebar-link">
+                    <i class="lni lni-agenda"></i>
+                    <span>Task</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                   data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
+                    <i class="lni lni-protection"></i>
+                    <span>Auth</span>
+                </a>
+                <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">Login</a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">Register</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                   data-bs-target="#multi" aria-expanded="false" aria-controls="multi">
+                    <i class="lni lni-layout"></i>
+                    <span>Multi Level</span>
+                </a>
+                <ul id="multi" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse"
+                           data-bs-target="#multi-two" aria-expanded="false" aria-controls="multi-two">
+                            Two Links
+                        </a>
+                        <ul id="multi-two" class="sidebar-dropdown list-unstyled collapse">
+                            <li class="sidebar-item">
+                                <a href="#" class="sidebar-link">Link 1</a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="#" class="sidebar-link">Link 2</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <i class="lni lni-popup"></i>
+                    <span>Notification</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <i class="lni lni-cog"></i>
+                    <span>Setting</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#" class="sidebar-link">
+                <i class="lni lni-exit"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+    <div class="main">
+        <main class="content px-3 py-4">
+            <div class="container-fluid">
+                <div class="mb-3">
+                    <h3 class="fw-bold fs-4 mb-3">Quy trình hoá đơn</h3>
+                    </h3>
+                    <div class="row mt-5">
+                        <div class="d-flex">
+                            <div class="ms-auto mb-3">
+                                <input type="text" class="btn border-dark" name="" id="key">
+                                <button class="btn border-dark">Tìm kiếm</button>
+                            </div>
+                        </div>
+                        <div class=" d-flex justify-content-center">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
+                                            data-bs-target="#home" type="button" role="tab" aria-controls="home"
+                                            aria-selected="true" onclick="getTrangThai('Chờ xác nhận')">Chờ xác nhận
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab"
+                                            data-bs-target="#profile" type="button" role="tab" aria-controls="profile"
+                                            aria-selected="false" onclick="getTrangThai('Đã xác nhận')">Đã xác nhận
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="contact-tab" data-bs-toggle="tab"
+                                            data-bs-target="#contact" type="button" role="tab" aria-controls="contact"
+                                            aria-selected="false" onclick="getTrangThai('Chờ giao hàng')">chờ vận chuyển
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="danggh" data-bs-toggle="tab"
+                                            data-bs-target="#danggh-tab" type="button" role="tab"
+                                            aria-controls="danggh-tab"
+                                            aria-selected="false" onclick="getTrangThai('Đang giao hàng')">Đang giao
+                                        hàng
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="dagh" data-bs-toggle="tab"
+                                            data-bs-target="#dagh-tab" type="button" role="tab" aria-controls="dagh-tab"
+                                            aria-selected="false" onclick="getTrangThai('Đã giao hàng')">Đã giao hàng
+                                    </button>
+                                </li>
+
+                            </ul>
+                        </div>
+                        <div class="tab-content text-center" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home" role="tabpanel"
+                                 aria-labelledby="home-tab">
+                                <div class="col-12">
+                                    <table class="table table-hover table-bordered">
+                                        <thead>
+                                        <tr class="highlight">
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Khách hàng</th>
+                                            <th scope="col">SĐT</th>
+                                            <th scope="col">Địa chỉ</th>
+                                            <th scope="col">Tiền sản phẩm</th>
+                                            <th scope="col">Tiền giảm giá</th>
+                                            <th scope="col">Tổng tiền</th>
+                                            <th scope="col">Trạng thái</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="listChoXacNhan">
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade" id="profile" role="tabpanel"
+                                 aria-labelledby="profile-tab">
+                                <div class="col-12">
+                                    <table class="table table-hover table-bordered">
+                                        <thead>
+                                        <tr class="highlight">
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Khách hàng</th>
+                                            <th scope="col">SĐT</th>
+                                            <th scope="col">Địa chỉ</th>
+                                            <th scope="col">Tiền sản phẩm</th>
+                                            <th scope="col">Tiền giảm giá</th>
+                                            <th scope="col">Tổng tiền</th>
+                                            <th scope="col">Trạng thái</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="listDaXacNhan">
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="contact" role="tabpanel"
+                                 aria-labelledby="contact-tab">
+                                <div class="col-12">
+                                    <table class="table table-hover table-bordered">
+                                        <thead>
+                                        <tr class="highlight">
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Khách hàng</th>
+                                            <th scope="col">SĐT</th>
+                                            <th scope="col">Địa chỉ</th>
+                                            <th scope="col">Tiền sản phẩm</th>
+                                            <th scope="col">Tiền giảm giá</th>
+                                            <th scope="col">Tổng tiền</th>
+                                            <th scope="col">Trạng thái</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="choGH">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="danggh-tab" role="tabpanel"
+                                 aria-labelledby="danggh">
+                                <div class="col-12">
+                                    <table class="table table-hover table-bordered">
+                                        <thead>
+                                        <tr class="highlight">
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Khách hàng</th>
+                                            <th scope="col">SĐT</th>
+                                            <th scope="col">Địa chỉ</th>
+                                            <th scope="col">Tiền sản phẩm</th>
+                                            <th scope="col">Tiền giảm giá</th>
+                                            <th scope="col">Tổng tiền</th>
+                                            <th scope="col">Trạng thái</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="listDangGH">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="dagh-tab" role="tabpanel"
+                                 aria-labelledby="dagh">
+                                <div class="col-12">
+                                    <table class="table table-hover table-bordered">
+                                        <thead>
+                                        <tr class="highlight">
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Khách hàng</th>
+                                            <th scope="col">SĐT</th>
+                                            <th scope="col">Địa chỉ</th>
+                                            <th scope="col">Tiền sản phẩm</th>
+                                            <th scope="col">Tiền giảm giá</th>
+                                            <th scope="col">Tổng tiền</th>
+                                            <th scope="col">Trạng thái</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="listDaGH">
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="collapse mt-5" id="collapseExample">
+                    <div class="card-header text-center"><h3>Sản phẩm đã mua</h3></div>
+                    <div class="card card-body">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Tên sản phẩm</th>
+                                <th scope="col">Giá bán</th>
+                                <th scope="col">Số lượng mua</th>
+                                <th scope="col">Tổng tiền</th>
+                            </tr>
+                            </thead>
+                            <tbody id="chiTietHoaDon">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+<script th:src="@{https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js}"></script>
+<script>
+    const hamBurger = document.querySelector(".toggle-btn");
+    hamBurger.addEventListener("click", function () {
+        document.querySelector("#sidebar").classList.toggle("expand");
+    });
+    let trangThai = null;
+
+    function getList(btn, id) {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8080/admin/getListTrangThaiHoaDon" + "?trangThai=" + btn,
+            success: function (data) {
+                document.getElementById(id).innerHTML = ``;
+                data.forEach(function (item) {
+                    let row = document.createElement("tr");
+                    row.innerHTML = `<th scope="row">${item.id}</th>
+                                            <td>${item.tenKhachHang}</td>
+                                            <td>${item.sdt}</td>
+                                            <td>${item.diaChi}</td>
+                                            <td>${item.tongTien}đ</td>
+                                            <td>${item.tienGiamGia}đ</td>
+                                            <td>${item.conLai}đ</td>
+                                            <td><span class="btn bg-success text-light">${item.trangThai}</span></td>
+                                            <td>
+                                            <button onclick="chuyenTrangThai('${item.id}',this)" class="btn border-dark">Xác nhận</button>
+                                            <button onclick="getCTHD('${item.id}')" class="btn border-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><i class="fa-regular fa-eye"></i></button>
+                                            </td>`;
+                    document.getElementById(id).appendChild(row);
+                })
+            }
+        })
+    }
+
+    let idDS = null;
+
+    function getTrangThai(btn) {
+        switch (btn) {
+            case "Chờ xác nhận":
+                idDS = "listChoXacNhan";
+                getList(btn, idDS);
+                break;
+            case "Đã xác nhận" :
+                idDS = "listDaXacNhan";
+                getList(btn, idDS);
+                break;
+            case "Chờ giao hàng" :
+                idDS = "choGH";
+                getList(btn, idDS);
+                break;
+            case "Đang giao hàng" :
+                idDS = "listDangGH";
+                getList(btn, idDS);
+                break;
+            default :
+                idDS = "listDaGH";
+                getList(btn, idDS);
+        }
+    }
+
+    function chuyenTrangThai(idHD, btn) {
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/chuyenTrangThai" + "?idHD=" + idHD,
+            success: function (status) {
+                if (status === "success") {
+                    let row = btn.parentNode.parentNode
+                    row.parentNode.removeChild(row);
+
+
+                    var successMessage = document.createElement('div');
+                    successMessage.classList.add('success-message');
+                    successMessage.textContent = 'Thành công';
+                    document.body.appendChild(successMessage);
+
+                    // Sau 5 giây, thêm class 'hide' để kích hoạt hiệu ứng ẩn
+                    setTimeout(function () {
+                        successMessage.classList.add('hide');
+                        setTimeout(function () {
+                            successMessage.remove();
+                        }, 500); // Đợi 0.5 giây để hoàn tất hiệu ứng ẩn
+                    }, 5000);
+                }
+            }
+        })
+    }
+    function getCTHD(idHD){
+        $.ajax({
+            type : "GET",
+            url : "http://localhost:8080/getGioHangChiTiet" + "?idHD=" + idHD,
+            success : function (data){
+                document.getElementById("chiTietHoaDon").innerHTML = ``;
+                data.forEach(function (item){
+                    console.log(item)
+                    let row = document.createElement("tr");
+                    row.innerHTML = `
+                          <td scope="row">${item.giayCT.tenGiay}</td>
+                          <td>${item.giaBan}đ</td>
+                          <td>${item.soLuongMua}</td>
+                          <td>${item.tongTien}đ</td>
+                        `;
+                    document.getElementById("chiTietHoaDon").appendChild(row);
+                })
+            }
+        })
+    }
+
+
+</script>
+
+</body>
+</html>

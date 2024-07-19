@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymleaf.org/extras/spring-security6">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+          integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" th:href="@{/css/styleadmin.css}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+
+
+    <style>
+        .success-message {
+            position: fixed;
+            top: 130px;
+            right: 20px;
+            background-color: white;
+            color: green;
+            padding: 10px 20px;
+            border: 1px solid;
+            border-radius: 5px;
+            animation: fadeIn 0.5s ease-in-out forwards;
+            z-index: 9999;
+        }
+
+        .success-message.hide {
+            animation: fadeOut 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <aside id="sidebar">
+        <div class="d-flex">
+            <button class="toggle-btn" type="button">
+                <i class="lni lni-grid-alt"></i>
+            </button>
+            <div class="sidebar-logo">
+                <a href="#">CodzSword</a>
+            </div>
+        </div>
+        <ul class="sidebar-nav">
+            <li class="sidebar-item">
+                <a href="/admin/adminPage" class="sidebar-link">
+                    <i class="lni lni-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/admin/addSP" class="sidebar-link">
+                    <i class="lni lni-agenda"></i>
+                    <span>Task</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                   data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
+                    <i class="lni lni-protection"></i>
+                    <span>Auth</span>
+                </a>
+                <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">Login</a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">Register</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                   data-bs-target="#multi" aria-expanded="false" aria-controls="multi">
+                    <i class="lni lni-layout"></i>
+                    <span>Multi Level</span>
+                </a>
+                <ul id="multi" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse"
+                           data-bs-target="#multi-two" aria-expanded="false" aria-controls="multi-two">
+                            Two Links
+                        </a>
+                        <ul id="multi-two" class="sidebar-dropdown list-unstyled collapse">
+                            <li class="sidebar-item">
+                                <a href="#" class="sidebar-link">Link 1</a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="#" class="sidebar-link">Link 2</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <i class="lni lni-popup"></i>
+                    <span>Notification</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <i class="lni lni-cog"></i>
+                    <span>Setting</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#" class="sidebar-link">
+                <i class="lni lni-exit"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+    <div class="main">
+        <main class="content px-3 py-4">
+            <div class="container-fluid">
+                <div class="mb-3">
+                    <h3 class="fw-bold fs-4 mb-3">Quy trình hoá đơn</h3>
+
+                    <div class="p-5 row">
+                        <div class="col-6">
+                            <div class="col-8 d-flex">
+                                <label class="col-4">Hãng giày</label>
+                                <select class="form-control" id="select1" data-live-search="true">
+
+                                </select>
+                            </div>
+                            <div class="col-8 d-flex mt-5">
+                                <label class="col-4">Màu sắc</label>
+                                <select class="form-control" id="select2" data-live-search="true">
+
+                                </select>
+                            </div>
+                            <div class="col-8 d-flex mt-5">
+                                <label class="col-4">Giá bán</label>
+                                <input type="number" class="form-control" id="giaBan">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="col-8 d-flex">
+                                <label class="col-4">Size</label>
+                                <select class="form-control" id="select3" data-live-search="true">
+
+                                </select>
+                            </div>
+                            <div class="row mt-5" style="position: relative;">
+                                <div class="search-input col-8 d-flex">
+                                    <label class="col-4">Tên giày</label>
+                                    <input type="text" class="form-control" name="" id="key">
+                                </div>
+                                <div class="auto_cbb col-4 list-group"
+                                     style="list-style: none;display: none;position: absolute;right: 0;top: 0">
+                                </div>
+                            </div>
+                            <div class="search-input mt-5 col-8 d-flex">
+                                <label class="col-4">Số lượng</label>
+                                <input type="number" class="form-control" name="" id="soLuong">
+                            </div>
+                        </div>
+                        <div class="row justify-content-center pt-5">
+                            <button class="col-3 btn border-dark" onclick="add()">Thêm</button>
+                        </div>
+
+                        <table class="table table-bordered mt-5">
+                            <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Hãng</th>
+                                <th scope="col">Size</th>
+                                <th scope="col">Màu sắc</th>
+                                <th scope="col">Tên giày</th>
+                                <th scope="col">Giá bán</th>
+                                <th scope="col">Số lượng</th>
+                                <th scope="col">Trạng thái</th>
+                                <th scope="col">Hoạt động</th>
+                            </tr>
+                            </thead>
+                            <tbody id="ListSP">
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    let hangGiay = $("#select1");
+    let sizeGiay = $("#select3");
+    let mauSac = $("#select2");
+    let giaBan = $("#giaBan");
+    let soLuong = $("#soLuong");
+    let data = [];
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/admin/getSP",
+        success: function (data1) {
+            data1.forEach(function (item) {
+                data.push(item.tenGiay);
+                let list = document.createElement("tr");
+                list.innerHTML = `
+                        <th scope="row">${item.id}</th>
+                        <td>${item.hangGiay.tenHang}</td>
+                        <td>${item.sizeGiay.sizeSo}</td>
+                        <td>${item.mauSacGiay.tenMau}</td>
+                        <td>${item.tenGiay}</td>
+                        <td>${item.giaBan}</td>
+                        <td>${item.soLuongTon}</td>
+                        <td>${item.trangThai}</td>
+                        <td>
+                        <button class="btn border-dark" onclick="xoa(this,'${item.id}')">Xoá</button>
+                        </td>
+          `;
+                $("#ListSP").append(list);
+            })
+            data = [...new Set(data)];
+        }
+    });
+    const hamBurger = document.querySelector(".toggle-btn");
+    hamBurger.addEventListener("click", function () {
+        document.querySelector("#sidebar").classList.toggle("expand");
+    });
+
+    const searchWraper = document.querySelector(".search-input");
+    const inputKey = document.querySelector("#key");
+    const autoComplete = document.querySelector(".auto_cbb");
+
+    inputKey.onkeyup = (e) => {
+        let userData = e.target.value;
+        let list = [];
+        if (userData) {
+            list = data.filter((data) => {
+                return data.includes(userData);
+            })
+            list = list.map(item => {
+                return html = '<li class="list-group-item">' + item + '</li>';
+
+            })
+            show(list)
+            autoComplete.style.display = "block";
+            let allList = autoComplete.querySelectorAll("li");
+            allList.forEach(item => item.setAttribute("onclick", "select(this)"))
+        } else {
+            autoComplete.style.display = "none";
+        }
+    }
+
+    function select(item) {
+        let selectData = item.textContent;
+        inputKey.value = selectData;
+        autoComplete.style.display = "none";
+    }
+
+    function show(list) {
+        let listData;
+        if (!list.length) {
+            userValue = inputKey.value;
+            listData = '<li class="list-group-item">' + userValue + '</li>';
+        } else {
+            listData = list.join('');
+
+        }
+        autoComplete.innerHTML = listData;
+    }
+
+    function add() {
+
+
+        $.ajax({
+            url: 'http://localhost:8080/admin/add?idhang='+hangGiay.val() +"&idSize="+sizeGiay.val()+"&idMau="+mauSac.val()+"&soluong="+soLuong.val()+"&tenGiay="+inputKey.value+"&giaBan="+giaBan.val(),
+            type: 'POST',
+            success: function(status) {
+                if(status === "update"){
+
+            }else {
+                    console.log($("#ListSP"))
+                    let list = document.createElement("tr");
+                    list.innerHTML = `
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>Otto</td>
+            <td>Otto</td>
+            <td>Otto</td>
+            <td>Otto</td>
+            <td>
+              <button class="btn border-dark" onclick="xoa(this)">Xoá</button>
+              <button class="btn border-dark" onclick="luu(this)">Lưu</button>
+            </td>
+          `;
+                    $("#ListSP").prepend(list);
+                }
+            }
+        });
+
+
+    }
+
+    function xoa(btn) {
+
+        console.log(btndelete)
+    }
+
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/admin/getHangGiay",
+        success: function (data) {
+            data.forEach(function (item) {
+                let row = `<option value="${item.id}">${item.tenHang}</option>`;
+                $("#select1").append(row);
+            })
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/admin/getMauSac",
+        success: function (data) {
+            data.forEach(function (item) {
+                let row = `<option value="${item.id}">${item.tenMau}</option>`;
+                $("#select2").append(row);
+            })
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/admin/getSize",
+        success: function (data) {
+            data.forEach(function (item) {
+                let row = `<option value="${item.id}">${item.sizeSo}</option>`;
+                $("#select3").append(row);
+            })
+        }
+    });
+
+
+    let elementID = $('#select1');
+    elementID.select2();
+    $('#select2').select2();
+    $('#select3').select2();
+</script>
+
+</body>
+</html>
