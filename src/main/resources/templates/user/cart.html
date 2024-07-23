@@ -377,7 +377,7 @@
     }
     function xoaSP(idGHCT,btn){
         $.ajax({
-            type : "POST",
+            type : "DELETE",
             url : "http://localhost:8080/deleteGioHangCT" + "?idGHCT=" + idGHCT,
             success : function (status){
                 if(status === "success"){
@@ -462,7 +462,7 @@
         radio.forEach(function (e) {
             if (e.checked) {
                 $.ajax({
-                    type: "POST",
+                    type: "GET",
                     url: "http://localhost:8080/maGiamGia" + "?idPGG=" + IDPGG,
                     success: function (data) {
                         document.getElementById("tienGiamGia").textContent = data.mucGiamGia + "đ";
@@ -476,7 +476,7 @@
 
     function giamSL(idGH, idSP) {
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: "http://localhost:8080/tangSL" + "?idGH=" + idGH + "&roll=giam" + "&idSP=" + idSP,
             success: function (data) {
                 document.getElementById("tong-tien-" + idGH).textContent = data.tongTien + "đ";
@@ -510,7 +510,7 @@
 
     function tangSL(idGH, idSP) {
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: "http://localhost:8080/tangSL" + "?idGH=" + idGH + "&roll=tang" + "&idSP=" + idSP,
             success: function (data) {
                 document.getElementById("tong-tien-" + idGH).textContent = data.tongTien + "đ";
@@ -577,7 +577,7 @@
 
     function chonDiaChi(){
         $.ajax({
-            type : "POST",
+            type : "GET",
             url : "http://localhost:8080/chonDiaChi"+"?idDC="+idDiaChi,
             success : function (data){
                 document.getElementById("diaChi").value = data.dc;
